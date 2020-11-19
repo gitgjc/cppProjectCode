@@ -65,8 +65,8 @@ Market::vec_risk_factor_t Market::fetch_risk_factors(const string& regex) {
 }
 
 double Market::get_fx_spot(const string& name) {
-  const auto ccy_pair = fx_spot_name_to_ccy_pair(name);
-  return get_fx_spot(ccy_pair.first, ccy_pair.second);
+  const auto currency_pair = fx_spot_name_to_ccy_pair(name);
+  return get_fx_spot(currency_pair.first, currency_pair.second);
 }
 
 double Market::get_fx_spot(const std::string& base, const std::string& quote) {
