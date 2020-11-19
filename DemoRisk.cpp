@@ -8,7 +8,7 @@
 using namespace::minirisk;
 
 void run(const string& portfolio_file, const string& risk_factors_file,
-    const string& fixing_path, const string& base_ccy) {
+    const string& fixing_path, const string& base_currency) {
   // load the portfolio from file
   portfolio_t portfolio = load_portfolio(portfolio_file);
   // save and reload portfolio to implicitly test round trip serialization
@@ -20,7 +20,7 @@ void run(const string& portfolio_file, const string& risk_factors_file,
   print_portfolio(portfolio);
 
   // get pricers
-  std::vector<ppricer_t> pricers(get_pricers(portfolio, base_ccy));
+  std::vector<ppricer_t> pricers(get_pricers(portfolio, base_currency));
 
   // initialize market data server
   std::shared_ptr<const MarketDataServer> mds(
@@ -89,7 +89,7 @@ void usage() {
 
 int main(int argc, const char **argv) {
   // parse command line arguments
-  string portfolio, riskfactors, fixingpath, baseccy;
+  string portfolio, riskfactors, fixingpath, currency;
   if (argc % 2 == 0)
     usage();
   for (int i = 1; i < argc; i += 2) {
@@ -108,11 +108,11 @@ int main(int argc, const char **argv) {
   }
   if (portfolio == "" || riskfactors == "")
     usage();
-  if (baseccy == "")
-    baseccy = "USD";
+  if (currency == "")
+    currency = "USD";
 
   try {
-    run(portfolio, riskfactors, fixingpath, baseccy);
+    run(portfolio, riskfactors, fixingpath, currency);
     return 0;  // report success to the caller
   }
   catch (const std::exception& e) {
