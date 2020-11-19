@@ -13,18 +13,18 @@ struct TradePayment : Trade<TradePayment>
 
     TradePayment() {}
 
-    void init(const std::string& ccy, double quantity, const Date& delivery_date)
+    void init(const std::string& currency, double quantity, const Date& delivery_date)
     {
         Trade::init(quantity);
-        m_ccy = ccy;
+        m_currency = currency;
         m_delivery_date = delivery_date;
     }
 
-    virtual ppricer_t pricer(const std::string& base_ccy) const;
+    virtual ppricer_t pricer(const std::string& base_currency) const;
 
-    const string& ccy() const
+    const string& currency() const
     {
-        return m_ccy;
+        return m_currency;
     }
 
     const Date& delivery_date() const
@@ -35,22 +35,22 @@ struct TradePayment : Trade<TradePayment>
 private:
     void save_details(my_ofstream& os) const
     {
-        os << m_ccy << m_delivery_date;
+        os << m_currency << m_delivery_date;
     }
 
     void load_details(my_ifstream& is)
     {
-        is >> m_ccy >> m_delivery_date;
+        is >> m_currency >> m_delivery_date;
     }
 
     void print_details(std::ostream& os) const
     {
-        os << format_label("Currency") << m_ccy << std::endl;
+        os << format_label("Currency") << m_currency << std::endl;
         os << format_label("Delivery Date") << m_delivery_date << std::endl;
     }
 
 private:
-    string m_ccy;
+    string m_currency;
     Date m_delivery_date;
 };
 
