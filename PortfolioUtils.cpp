@@ -11,24 +11,26 @@ namespace minirisk {
 namespace {
 void bump_risk_factors(const double bump_size, 
     std::vector<std::pair<std::string, double>>* bumped_up, 
-    std::vector<std::pair<std::string, double>>* bumped_dn) {
-  for (auto& p : *bumped_up) {
+    std::vector<std::pair<std::string, double>>* bumped_dn) 
+{
+  for (auto& p : *bumped_up) 
     p.second += bump_size;
-  }
-  for (auto& p : *bumped_dn) {
+  for (auto& p : *bumped_dn) 
     p.second -= bump_size;
-  }
 }
 
 void find_all_risk_ccy(
     const std::vector<std::pair<std::string, double>>& risk_factors, 
-    std::vector<std::string> *ccys) {
-  std::set<std::string> risk_ccys;
-  for (const auto& rf : risk_factors) {
-    std::string ccy = rf.first.substr(rf.first.length() - 3);
-    if (risk_ccys.find(ccy) == risk_ccys.end()) {
-      risk_ccys.insert(ccy);
-      ccys->push_back(ccy);
+    std::vector<std::string> *currencys) 
+{
+  std::set<std::string> risk_currencys;
+  for (const auto& rf : risk_factors) 
+  {
+    std::string currency = rf.first.substr(rf.first.length() - 3);
+    if (risk_currencys.find(currency) == risk_currencys.end()) 
+    {
+      risk_currencys.insert(currency);
+      currencys->push_back(currency);
     }
   }
 }
