@@ -14,16 +14,16 @@ extern const string ir_curve_discount_prefix;
 extern const string fx_spot_prefix;
 extern const string fx_fwd_prefix;
 
-inline string ir_curve_discount_name(const string& ccy) {
-  return ir_curve_discount_prefix + ccy;
+inline string ir_curve_discount_name(const string& currency) {
+  return ir_curve_discount_prefix + currency;
 }
 
-inline string fx_spot_name(const string& ccy1, const string& ccy2) {
-  return fx_spot_prefix + ccy1 + "." + ccy2;
+inline string fx_spot_name(const string& currency1, const string& currency2) {
+  return fx_spot_prefix + currency1 + "." + currency2;
 }
 
-inline string fx_fwd_name(const string& ccy1, const string& ccy2) {
-  return fx_fwd_prefix + ccy1 + "." + ccy2;
+inline string fx_fwd_name(const string& currency1, const string& currency2) {
+  return fx_fwd_prefix + currency1 + "." + currency2;
 }
 
 template<class T>
