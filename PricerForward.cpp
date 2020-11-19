@@ -40,7 +40,7 @@ double PricerForward::price(Market& m, const FixingDataServer* fds) const {
     fwd_rate = fwd->fwd(m_fixing_date);
   }
   MYASSERT(!std::isnan(fwd_rate), "FX forward or fixing not available " 
-      << m_ccy1 << m_ccy2 << " for " << m_fixing_date.to_string());
+      << m_currency1 << m_currency2 << " for " << m_fixing_date.to_string());
   MYASSERT(!std::isnan(disc_factor), "Disc factor not available " 
       << m_currency1 << m_currency2 << " for " << m_settle_date.to_string());
   double fx_spot = 
