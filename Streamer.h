@@ -88,7 +88,7 @@ inline my_ofstream& operator<<(my_ofstream& os, double v)
     union { double d; uint64_t u; } tmp;
     tmp.d = v;
     char c[17];
-    sprintf(c, "%llx", tmp.u);
+    sprintf_s(c, "%llx", tmp.u);
     c[16] = '\0';
     os << c;
     return os;
@@ -99,7 +99,7 @@ inline my_ifstream& operator>>(my_ifstream& is, double& v)
     union { double d; uint64_t u; } tmp;
     std::string str;
     is >> str;
-    sscanf(str.c_str(), "%" SCNx64, &tmp.u);
+    sscanf_s(str.c_str(), "%" SCNx64, &tmp.u);
     v = tmp.d;
     return is;
 }
