@@ -8,40 +8,43 @@
 #include <exception>
 
 namespace minirisk {
-namespace {
-void bump_risk_factors(const double bump_size, 
+namespace
+{
+    void bump_risk_factors
+    (const double bump_size, 
     std::vector<std::pair<std::string, double>>* bumped_up, 
     std::vector<std::pair<std::string, double>>* bumped_dn) 
-{
-  for (auto& p : *bumped_up) 
-    p.second += bump_size;
-  for (auto& p : *bumped_dn) 
-    p.second -= bump_size;
-}
-
-void find_all_risk_ccy(
-    const std::vector<std::pair<std::string, double>>& risk_factors, 
-    std::vector<std::string> *currencys) 
-{
-  std::set<std::string> risk_currencys;
-  for (const auto& rf : risk_factors) 
-  {
-    std::string currency = rf.first.substr(rf.first.length() - 3);
-    if (risk_currencys.find(currency) == risk_currencys.end()) 
     {
-      risk_currencys.insert(currency);
-      currencys->push_back(currency);
+        for (auto& p : *bumped_up) 
+        p.second += bump_size;
+        for (auto& p : *bumped_dn) 
+        p.second -= bump_size;
     }
-  }
-}
 
-trade_value_t pv01_or_nan(trade_value_t& hi, trade_value_t& lo, double dr) {
-  if (std::isnan(hi.first))
-    return std::make_pair(nan<double>(), hi.second);
-  if (std::isnan(lo.first))
-    return std::make_pair(nan<double>(), lo.second);
-  return std::make_pair((hi.first - lo.first) / dr, "");
-}
+    void find_all_risk_ccy
+    (const std::vector<std::pair<std::string, double>>& risk_factors, 
+    std::vector<std::string> *currencys) 
+    {
+        std::set<std::string> risk_currencys;
+        for (const auto& rf : risk_factors) 
+        {
+        std::string currency = rf.first.substr(rf.first.length() - 3);
+        if (risk_currencys.find(currency) == risk_currencys.end()) 
+            {
+            risk_currencys.insert(currency);
+            currencys->push_back(currency);
+            }
+         }
+     }
+
+    trade_value_t pv01_or_nan(trade_value_t& high, trade_value_t& low, double dr)
+    {
+        if (std::isnan(high.first))
+            return std::make_pair(nan<double>(), high.second);
+        if (std::isnan(low.first))
+            return std::make_pair(nan<double>(), low.second);
+        return std::make_pair((high.first - low.first) / dr, "");
+    }
 }
 
 void print_portfolio(const portfolio_t& portfolio) {
@@ -203,38 +206,52 @@ std::vector<std::pair<std::string, portfolio_values_t>> compute_pv01_bucketed(
 
 std::vector<std::pair<std::string, portfolio_values_t>> compute_fx_delta(
      const std::vector<ppricer_t>& pricers, const Market& mkt,
-     std::shared_ptr<const FixingDataServer> fds) {
-  std::vector<std::pair<std::string, portfolio_values_t>> fx_delta;
-  auto fx_spots = mkt.get_risk_factors(fx_spot_prefix + "[A-Z]{3}");
-  std::vector<std::string> risk_ccys;
-  find_all_risk_ccy(fx_spots, &risk_ccys);
-  Market tmpmkt(mkt);
+     std::shared_ptr<const FixingDataServer> fds)
+{
+    std::vector<std::pair<std::string, portfolio_values_t>> fx_delta;
+    auto fx_spots = mkt.get_risk_factors(fx_spot_prefix + "[A-Z]{3}");
+    const double bump_unit = 0.001;
+    std::vector<std::string> risk_vector;
+    find_all_risk_ccy(fx_spots, &risk_vector);
+    Market mkt1(mkt);
 
-  for (const auto& risk_ccy : risk_ccys) {
-    auto risk_factors = mkt.get_risk_factors(fx_spot_prefix + risk_ccy);
-    MYASSERT(risk_factors.size() == 1, 
-        "Duplicate fx spot rate." << fx_spot_prefix + risk_ccy);
-    const double original_value = risk_factors[0].second;
-    double bump_size = original_value * 0.1 / 100;
-    double dr = 2 * bump_size;
-    risk_factors[0].second = original_value + bump_size;
-    tmpmkt.set_risk_factors(risk_factors);
-    auto pv_up = compute_prices(pricers, tmpmkt, fds);
-    risk_factors[0].second = original_value - bump_size;
-    tmpmkt.set_risk_factors(risk_factors);
-    auto pv_dn = compute_prices(pricers, tmpmkt, fds);
-    risk_factors[0].second = original_value;
-    tmpmkt.set_risk_factors(risk_factors);
+    for (const auto& risk_currency : risk_vector)
+    {
+        auto risk_factors = mkt.get_risk_factors(fx_spot_prefix + risk_currency);
+        MYASSERT(risk_factors.size() == 1, "Duplicate fx spot rate." << fx_spot_prefix + risk_currency);
 
-    fx_delta.push_back(
-        std::make_pair(fx_spot_prefix + risk_ccy,
-          std::vector<trade_value_t>(pricers.size())));
+        double original_value = risk_factors[0].second;
+        double bump_size = original_value * bump_unit;
+        double dr = 2 * bump_unit;
+        portfolio_values_t pv_up, pv_down;
 
-    std::transform(
-        pv_up.begin(), pv_up.end(), pv_dn.begin(), 
-        fx_delta.back().second.begin(), [dr](auto& hi, auto& lo) ->
-        trade_value_t { return pv01_or_nan(hi, lo, dr); });
-  }
+        risk_factors[0].second = original_value  + bump_unit;
+        mkt1.set_risk_factors(risk_factors);
+        pv_up = compute_prices(pricers, mkt1, fds);
+        risk_factors[0].second = original_value - bump_unit;
+        mkt1.set_risk_factors(risk_factors);
+        pv_down = compute_prices(pricers, mkt1, fds);
+        risk_factors[0].second = original_value;
+        mkt1.set_risk_factors(risk_factors);
+
+        fx_delta.push_back
+        (
+            std::make_pair
+            (
+                fx_spot_prefix + risk_currency,
+                std::vector<trade_value_t>(pricers.size())
+            )
+        );
+
+        //***
+        std::transform
+        (
+            pv_up.begin(), pv_up.end(), pv_down.begin(),
+            fx_delta.back().second.begin(), 
+            [dr](auto& high, auto& low) ->
+            trade_value_t { return pv01_or_nan(high, low, dr); }
+        );
+    }
   return fx_delta;
 }
 
