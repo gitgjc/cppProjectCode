@@ -8,7 +8,7 @@
 using namespace::minirisk;
 
 void run(const string& portfolio_file, const string& risk_factors_file,
-    const string& fixing_path, const string& base_currency) {
+    const string& fixing_path, const string& base_ccy) {
   // load the portfolio from file
   portfolio_t portfolio = load_portfolio(portfolio_file);
   // save and reload portfolio to implicitly test round trip serialization
@@ -20,7 +20,7 @@ void run(const string& portfolio_file, const string& risk_factors_file,
   print_portfolio(portfolio);
 
   // get pricers
-  std::vector<ppricer_t> pricers(get_pricers(portfolio, base_currency));
+  std::vector<ppricer_t> pricers(get_pricers(portfolio, base_ccy));
 
   // initialize market data server
   std::shared_ptr<const MarketDataServer> mds(
@@ -89,7 +89,7 @@ void usage() {
 
 int main(int argc, const char **argv) {
   // parse command line arguments
-  string portfolio, riskfactors, fixingpath, currency;
+  string portfolio, riskfactors, fixingpath, baseccy;
   if (argc % 2 == 0)
     usage();
   for (int i = 1; i < argc; i += 2) {
@@ -108,19 +108,25 @@ int main(int argc, const char **argv) {
   }
   if (portfolio == "" || riskfactors == "")
     usage();
-  if (currency == "")
-    currency = "USD";
+  if (baseccy == "")
+    baseccy = "USD";
 
+  //portfolio = "portfolio_11.txt";
+  //riskfactors = "risk_factors_5.txt";
   try {
-    run(portfolio, riskfactors, fixingpath, currency);
+    run(portfolio, riskfactors, fixingpath, baseccy);
+	system("pause");
     return 0;  // report success to the caller
   }
   catch (const std::exception& e) {
     std::cerr << e.what() << "\n";
+	system("pause");
     return -1; // report an error to the caller
   }
   catch (...) {
     std::cerr << "Unknown exception occurred\n";
+	system("pause");
     return -1; // report an error to the caller
   }
 }
+
