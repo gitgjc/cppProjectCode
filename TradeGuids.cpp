@@ -1,7 +1,7 @@
 #include "TradePayment.h"
 #include "TradeFXForward.h"
 
-namespace minirisk 
+namespace minirisk
 {
 
   const guid_t TradePayment::m_id = 0;
