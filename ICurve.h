@@ -28,7 +28,7 @@ struct ICurveFXForward;
 typedef std::shared_ptr<const ICurve> ptr_curve_t;
 typedef std::shared_ptr<const ICurveDiscount> ptr_disc_curve_t;
 typedef std::shared_ptr<const ICurveFXSpot> ptr_fx_spot_curve_t;
-typedef std::shared_ptr<const ICurveFXForward> ptr_fx_fwd_curve_t;
+typedef std::shared_ptr<const ICurveFXForward> ptr_fx_forward_curve_t;
 
 struct ICurveDiscount : ICurve
 {
@@ -39,7 +39,7 @@ struct ICurveDiscount : ICurve
 struct ICurveFXForward : ICurve
 {
     // compute the FX forward price of currency ccy1 deniminated in ccy2 for delivery at time t
-    virtual double fwd(const Date& t) const = 0;
+    virtual double forward(const Date& t) const = 0;
 };
 
 struct ICurveFXSpot : ICurve
