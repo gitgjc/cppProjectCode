@@ -36,21 +36,20 @@ namespace minirisk {
         Date(unsigned serial) : m_serial(serial) {}
 
         // Constructor where the input value is checked.
-        //*给定天数时自动赋值m_serial
-        //*给定字符串时赋值m_serial
-        //stoul将string转为unsigned
+       
+        //stoul : string to unsigned 
         Date(const std::string& yyyymmdd) : Date
         (std::stoul(yyyymmdd.substr(0, 4)),
             std::stoul(yyyymmdd.substr(4, 2)),
             std::stoul(yyyymmdd.substr(6)))
         {}
-        //*给定日期时需要进行转换为天数（通过init函数）
+        //date to # of days
         Date(unsigned year, unsigned month, unsigned day)
         {
             init(year, month, day);
         }
 
-        //*若给定yearmonthday，init将转换为m_serial(即给定日期距离初始日期的天数)
+       
         void init(unsigned year, unsigned month, unsigned day)
         {
             check_valid(year, month, day);
@@ -60,7 +59,7 @@ namespace minirisk {
             m_serial = days_epoch[year - first_year] + month_days + day - 1;
         }
 
-        //*若给定天数，init将转换为m_serial
+       
         void init(unsigned serial)
         {
             //if (valid_test(serial))
@@ -69,14 +68,14 @@ namespace minirisk {
 
 
         /*Date(const std::string& yyyymmdd) :
-            Date(std::stoul(yyyymmdd.substr(0, 4))，std::stoul(yyyymmdd.substr(4, 2))，std::stoul(yyyymmdd.substr(6)))
+            Date(std::stoul(yyyymmdd.substr(0, 4))锛宻td::stoul(yyyymmdd.substr(4, 2))锛宻td::stoul(yyyymmdd.substr(6)))
         {}*/
-        //*判断日期是否有效
+        //valid date or not
         static void check_valid(unsigned y, unsigned m, unsigned d);
         static bool valid_test(unsigned y, unsigned m, unsigned d);
-        //*判断是否为闰年
+        //leap year or not
         static bool is_leap_year(unsigned year);
-        //*将距离起始日期的天数serial转换为年月日的日期
+        
         void year_month_day(unsigned* y, unsigned* m, unsigned* d) const;
 
 
@@ -86,7 +85,7 @@ namespace minirisk {
             return m_serial;
         }
 
-        //*运算符-大小关系
+        //* operator: compare
         bool operator<(const Date& d) const
         {
             return m_serial < d.getserial();
@@ -108,7 +107,7 @@ namespace minirisk {
             return m_serial <= d.getserial();
         }
 
-        //*运算符-加减
+        //* operator +-
         Date operator+(unsigned n) const
         {
             return Date(getserial() + n);
