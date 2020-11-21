@@ -3,57 +3,57 @@
 #include "ITrade.h"
 #include "Streamer.h"
 
-namespace minirisk {
-
-template <typename T>
-struct Trade : ITrade
+namespace minirisk
 {
-    virtual double quantity() const
-    {
-        return m_quantity;
-    }
 
-    void init(double quantity = 1.0)
+    template <typename T>
+    struct Trade : ITrade
     {
-        m_quantity = quantity;
-    }
+        virtual double quantity() const
+        {
+            return m_quantity;
+        }
 
-    virtual const guid_t& id() const
-    {
-        return T::m_id;
-    }
+        void init(double quantity = 1.0)
+        {
+            m_quantity = quantity;
+        }
 
-    virtual const std::string& idname() const
-    {
-        return T::m_name;
-    }
+        virtual const guid_t& id() const
+        {
+            return T::m_id;
+        }
 
-protected:
-    virtual void print(std::ostream& os) const
-    {
-        os << format_label("Id") << id() << std::endl;
-        os << format_label("Name") << idname() << std::endl;
-        os << format_label("Quantity") << quantity() << std::endl;
-        static_cast<const T*>(this)->print_details(os);
-        os << std::endl;
-    }
+        virtual const std::string& idname() const
+        {
+            return T::m_name;
+        }
 
-    virtual void save(my_ofstream& os) const
-    {
-        os << id()
-            << quantity();
-        static_cast<const T*>(this)->save_details(os);
-    }
+    protected:
+        virtual void print(std::ostream& os) const
+        {
+            os << format_label("Id") << id() << std::endl;
+            os << format_label("Name") << idname() << std::endl;
+            os << format_label("Quantity") << quantity() << std::endl;
+            static_cast<const T*>(this)->print_details(os);
+            os << std::endl;
+        }
 
-    virtual void load(my_ifstream& is)
-    {
-        // read everything but id
-        is >> m_quantity;
-        static_cast<T*>(this)->load_details(is);
-    }
+        virtual void save(my_ofstream& os) const
+        {
+            os << id()<< quantity();
+            static_cast<const T*>(this)->save_details(os);
+        }
 
-private:
-    double m_quantity;
-};
+        virtual void load(my_ifstream& is)
+        {
+            // read everything but id
+            is >> m_quantity;
+            static_cast<T*>(this)->load_details(is);
+        }
+
+    private:
+        double m_quantity;
+    };
 
 } // namespace minirisk
