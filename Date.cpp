@@ -18,10 +18,10 @@ namespace minirisk {
     };
 
     const std::array<unsigned, 12> Date::days_in_month = { {31,28,31,30,31,30,31,31,30,31,30,31} };
-    //*闰年每月天数
+    //*leap year month
     const std::array<unsigned, 12> Date::leap_days_in_month = { {31,29,31,30,31,30,31,31,30,31,30,31} };
     const std::array<unsigned, 12> Date::days_ytd{ {0,31,59,90,120,151,181,212,243,273,304,334} };
-    //*闰年年天数
+    //leap year days
     const std::array<unsigned, 12> Date::leap_days_ytd{ {0,31,60,91,121,152,182,213,244,274,305,335} };
     const std::array<unsigned, Date::n_years> Date::days_epoch(static_cast<const std::array<unsigned, Date::n_years>&>(DateInitializer()));
 
@@ -43,7 +43,7 @@ namespace minirisk {
         return os.str();
     }
 
-    //*判断日期是否有效，年月日是否在区间
+  
     bool Date::valid_test(unsigned y, unsigned m, unsigned d)
     {
         if ((y >= first_year) && (y < last_year)
@@ -53,7 +53,7 @@ namespace minirisk {
         else
             return false;
     }
-    //*若日期无效，返回invalid date
+  
     void Date::check_valid(unsigned y, unsigned m, unsigned d)
     {
         MYASSERT(valid_test(y, m, d), "invalid date: " << d << "-" << m << "-" << y);
@@ -61,20 +61,20 @@ namespace minirisk {
 
 
 
-    //*将给定的serial转换为年月日
+    //serial to Y-M-D
     void Date::year_month_day(unsigned* y, unsigned* m, unsigned* d) const
     {
-        //*求年份
+        //year
         auto y_i = std::upper_bound(days_epoch.begin(), days_epoch.end(), m_serial);
         --y_i;
         *y = y_i - days_epoch.begin() + Date::first_year;
-        //*求月份
+        //month
         auto m_i = (is_leap_year(*y)) ?
             std::upper_bound(leap_days_ytd.begin(), leap_days_ytd.end(), m_serial - *y_i)
             : std::upper_bound(days_ytd.begin(), days_ytd.end(), m_serial - *y_i);
         --m_i;
         *m = m_i + 1 - (is_leap_year(*y) ? leap_days_ytd.begin() : days_ytd.begin());
-        //求日期
+        //day
         *d = m_serial + 1 - *y_i - *m_i;
     }
 
