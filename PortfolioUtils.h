@@ -15,7 +15,7 @@ typedef std::vector<trade_value_t> portfolio_values_t;
 
 // get pricer for each trade
 std::vector<ppricer_t> get_pricers(
-    const portfolio_t& portfolio, const std::string& base_currency);
+    const portfolio_t& portfolio, const std::string& base_ccy);
 
 // compute prices
 portfolio_values_t compute_prices(
@@ -58,4 +58,3 @@ void print_price_vector(const string& name, const portfolio_values_t& values);
 
 
 } // namespace minirisk
-
