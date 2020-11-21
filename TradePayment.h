@@ -2,7 +2,7 @@
 
 #include "Trade.h"
 
-namespace minirisk
+namespace minirisk 
 {
 
     struct TradePayment : Trade<TradePayment>
