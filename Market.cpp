@@ -28,7 +28,7 @@ const ptr_fx_spot_curve_t Market::get_fx_spot_curve(const string& name) {
   return get_curve<ICurveFXSpot, CurveFXSpot>(name);
 }
 
-const ptr_fx_fwd_curve_t Market::get_fx_fwd_curve(const string& name) {
+const ptr_fx_forward_curve_t Market::get_fx_forward_curve(const string& name) {
   return get_curve<ICurveFXForward, CurveFXForward>(name);
 }
 
@@ -53,20 +53,21 @@ double Market::get_yield(const string& ccyname)
 };
 
 Market::vec_risk_factor_t Market::fetch_risk_factors(const string& regex) {
-  if (m_fetched_regex.find(regex) != m_fetched_regex.end())
-    return get_risk_factors(regex);
-  auto rate_names = m_mds->match(regex);
-  std::vector<std::pair<std::string, double>> rates;
-  for (const auto& name : rate_names) {
-    rates.push_back(std::make_pair(name, from_mds("curve rate", name)));
-  }
-  m_fetched_regex.insert(regex);
-  return rates;
+    if (m_fetched_regex.find(regex) != m_fetched_regex.end()) {
+        return get_risk_factors(regex);
+    }
+    auto rate_names = m_mds->match(regex);
+    std::vector<std::pair<std::string, double>> rates;
+    for (const auto& name : rate_names) {
+        rates.push_back(std::make_pair(name, from_mds("curve rate", name)));
+    }
+    m_fetched_regex.insert(regex);
+    return rates;
 }
 
 double Market::get_fx_spot(const string& name) {
-  const auto currency_pair = fx_spot_name_to_ccy_pair(name);
-  return get_fx_spot(currency_pair.first, currency_pair.second);
+  const auto ccy_pair = fx_spot_name_to_ccy_pair(name);
+  return get_fx_spot(ccy_pair.first, ccy_pair.second);
 }
 
 double Market::get_fx_spot(const std::string& base, const std::string& quote) {
@@ -104,7 +105,7 @@ void Market::construct_fx_spot_rate_matrix() {
   std::memset(m_fx_spot_rate, 0, sizeof m_fx_spot_rate);
   const auto& fx_rates = fetch_risk_factors(
       "FX\\.SPOT\\.[A-Z]{3}(\\.[A-Z]{3})?");
-  u_int32_t idx = 0;
+  uint32_t idx = 0;
   for (const auto& fx_rate : fx_rates) {
     const auto ccy_pair = fx_spot_name_to_ccy_pair(fx_rate.first);
     for (const auto ccy : {ccy_pair.first, ccy_pair.second}) {
@@ -139,12 +140,12 @@ std::pair<std::string, std::string> Market::fx_spot_name_to_ccy_pair(
   return {base, quote};
 }
 
-std::pair<std::string, std::string> Market::fx_fwd_name_to_ccy_pair(
+std::pair<std::string, std::string> Market::fx_forward_name_to_ccy_pair(
     const std::string& name) {
-  const auto base = name.substr(fx_fwd_prefix.length(), 3);
+  const auto base = name.substr(fx_forward_prefix.length(), 3);
   const auto quote = 
-    name.length() == fx_fwd_prefix.length() + 7 ?
-    name.substr(fx_fwd_prefix.length() + 4) : "USD";
+    name.length() == fx_forward_prefix.length() + 7 ?
+    name.substr(fx_forward_prefix.length() + 4) : "USD";
   return {base, quote};
 }
 
