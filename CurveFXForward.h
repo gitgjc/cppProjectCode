@@ -17,7 +17,7 @@ struct CurveFXForward : ICurveFXForward {
   CurveFXForward(
       Market *mkt, const Date& today, const std::string& name);
 
-  virtual double fwd(const Date& t) const;
+  virtual double forward(const Date& t) const;
 
  private:
   Date m_today;
