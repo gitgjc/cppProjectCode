@@ -37,7 +37,7 @@ public:
 
     const ptr_fx_spot_curve_t get_fx_spot_curve(const string& name);
 
-    const ptr_fx_fwd_curve_t get_fx_fwd_curve(const string& name);
+    const ptr_fx_forward_curve_t get_fx_forward_curve(const string& name);
 
     // yield rate for currency name
     double get_yield(const string& name);
@@ -62,7 +62,7 @@ public:
     // clear all market curves execpt for the data points
     void clear()
     {
-        std::for_each(m_curves.begin(), m_curves.end(), [](auto& p) { p.second.reset(); });
+		std::for_each(m_curves.begin(), m_curves.end(), [](decltype(*begin(m_curves))& p) { p.second.reset(); });
     }
 
     // destroy all existing objects and modify a selected number of data points
@@ -73,7 +73,7 @@ public:
     std::pair<std::string, std::string> fx_spot_name_to_ccy_pair(
         const std::string& name);
 
-    std::pair<std::string, std::string> fx_fwd_name_to_ccy_pair(
+    std::pair<std::string, std::string> fx_forward_name_to_ccy_pair(
         const std::string&name);
 
 private:
@@ -89,7 +89,7 @@ private:
 
     // fx spot, assuming number of fx ccy is fewer than 200
     std::map<string, uint32_t> m_fx_ccy_idx;
-    double m_fx_spot_rate[300][300];
+    double m_fx_spot_rate[150][150];
 };
 
 } // namespace minirisk
